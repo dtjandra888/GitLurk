@@ -1,8 +1,26 @@
 
 #include <curl/curl.h>
 #include <iostream>
+#include <string>
 
-int main() {
+constexpr int MAX_USERNAME_LENGTH = 39;
+
+int main(int argc, char* argv[]) {
+  if (argc < 2) {
+    std::cerr << "Usage: github-activity <username>";
+    return 1;
+  }
+  std::string username{argv[1]};
+  if (username.empty()) {
+    std::cerr << "Username is empty\n";
+    return 1;
+  }
+
+  if (username.size() > MAX_USERNAME_LENGTH) {
+    std::cerr << "Username is over the character limit\n";
+    return 1;
+  }
+
   // Main curl object
   CURL* curl;
 
@@ -20,8 +38,9 @@ int main() {
     return 1;
   }
 
-  curl_easy_setopt(curl, CURLOPT_URL,
-                   "https://api.github.com/users/dtjandra888/events");
+  const std::string url = "https://api.github.com/users/" + username + "/events";
+
+  curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
   curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
 
   // From libcurl example
