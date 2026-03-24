@@ -1,5 +1,9 @@
 
 
+## Dependencies
+- libcurl
+- nlohmann-json3-dev
+
 ## Build
 
 ```
