@@ -6,7 +6,6 @@
 #include <format>
 #include <iostream>
 #include <string>
-#include <vector>
 
 constexpr int MAX_USERNAME_LENGTH = 39;
 
@@ -31,8 +30,11 @@ int main(int argc, char* argv[]) {
 
   const auto events = client.get_events(username);
 
-  for (const auto& event : events) {
-    std::cout << std::format("{} {} {}\n", event.type, event.repo, event.user);
+  for (const auto& [repo_name, stats] : events) {
+    std::cout << std::format("Events for {}:\n  {} Push Events\n  {} Pull "
+                             "Requests\n  {} Issues Events\n\n",
+                             repo_name, stats.push_events,
+                             stats.pull_request_events, stats.issues_events);
   }
 
   return 0;

@@ -1,13 +1,12 @@
 #pragma once
 
 #include <string>
-#include <vector>
+#include <unordered_map>
 
-struct GithubEvent {
-    std::string type;
-    std::string repo;
-    std::string user;
-    std::string created_at;
+struct RepoStats {
+  int push_events = 0;
+  int pull_request_events = 0;
+  int issues_events = 0;
 };
 
 class HttpsClient;
@@ -16,7 +15,7 @@ class GithubClient {
 public:
   GithubClient(HttpsClient& client);
 
-  std::vector<GithubEvent> get_events(std::string username);
+  std::unordered_map<std::string, RepoStats> get_events(std::string username);
 
 private:
   HttpsClient& m_client;
