@@ -4,6 +4,8 @@
 
 #include <nlohmann/json.hpp>
 
+#include <format>
+
 GithubClient::GithubClient(HttpsClient& client) : m_client(client) {}
 
 std::vector<GithubEvent> GithubClient::get_events(std::string username) {
@@ -12,7 +14,7 @@ std::vector<GithubEvent> GithubClient::get_events(std::string username) {
 
   std::vector<std::string> headers = {
       "Accept: application/vnd.github+json", "X-GitHub-Api-Version: 2026-03-10",
-      "User-Agent: dtjandra888"}; // TODO: change to github app
+      std::format("User-Agent: {}", username)}; // TODO: change to github app
 
   const auto response = m_client.get(url, headers);
 
