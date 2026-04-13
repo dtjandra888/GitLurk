@@ -2,6 +2,7 @@
 
 #include <string>
 #include <unordered_map>
+#include <optional>
 
 struct RepoStats {
   int push_events = 0;
@@ -15,7 +16,7 @@ class GithubClient {
 public:
   GithubClient(HttpsClient& client);
 
-  std::unordered_map<std::string, RepoStats> get_events(std::string username);
+  std::optional<std::unordered_map<std::string, RepoStats>> get_events(std::string username);
 
 private:
   HttpsClient& m_client;

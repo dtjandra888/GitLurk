@@ -8,7 +8,7 @@
 
 GithubClient::GithubClient(HttpsClient& client) : m_client(client) {}
 
-std::unordered_map<std::string, RepoStats>
+std::optional<std::unordered_map<std::string, RepoStats>>
 GithubClient::get_events(std::string username) {
   const std::string url =
       "https://api.github.com/users/" + username + "/events";
@@ -22,8 +22,16 @@ GithubClient::get_events(std::string username) {
   // Do parsing
   const auto data = nlohmann::json::parse(response);
 
-  std::unordered_map<std::string, RepoStats> stats;
+  // User not found
+  if (data.is_object() && data.contains("message")) {
+    return std::nullopt;
+  }
 
+  if (data.empty()) {
+    return std::unordered_map<std::string, RepoStats>{};
+  }
+
+  std::unordered_map<std::string, RepoStats> stats;
   for (const auto& event : data) {
     auto repo = event["repo"].value("name", "");
     auto type = event.value("type", "");

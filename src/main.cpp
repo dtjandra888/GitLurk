@@ -28,7 +28,19 @@ int main(int argc, char* argv[]) {
   HttpsClient https{};
   GithubClient client{https};
 
-  const auto events = client.get_events(username);
+  const auto events_opt = client.get_events(username);
+
+  if (!events_opt.has_value()) {
+    std::cerr << "Username was not found on Github\n";
+    return 1;
+  }
+
+  const auto events = events_opt.value();
+
+  if (events.empty()) {
+    std::cout << std::format("No data for {}\n", username);
+    return 0;
+  }
 
   for (const auto& [repo_name, stats] : events) {
     std::cout << std::format("Events for {}:\n  {} Push Events\n  {} Pull "
