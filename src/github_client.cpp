@@ -4,11 +4,27 @@
 
 #include <nlohmann/json.hpp>
 
+#include <chrono>
 #include <format>
+#include <sstream>
+
+namespace {
+/// Parse Github timestamp string (ISO8601)
+std::chrono::system_clock::time_point parse_time(const std::string& s) {
+  std::chrono::system_clock::time_point tp;
+  std::istringstream iss(s);
+
+  iss >> std::chrono::parse("%Y-%m-%dT%H:%M:%SZ", tp);
+
+  return tp;
+}
+} // namespace
+
+namespace Github {
 
 GithubClient::GithubClient(HttpsClient& client) : m_client(client) {}
 
-std::optional<std::unordered_map<std::string, RepoStats>>
+std::optional<std::vector<GithubEvent>>
 GithubClient::get_events(std::string username) {
   const std::string url =
       "https://api.github.com/users/" + username + "/events";
@@ -27,21 +43,20 @@ GithubClient::get_events(std::string username) {
     return std::nullopt;
   }
 
+  // User has no data
   if (data.empty()) {
-    return std::unordered_map<std::string, RepoStats>{};
+    return std::vector<GithubEvent>{};
   }
 
-  std::unordered_map<std::string, RepoStats> stats;
+  std::vector<GithubEvent> events;
   for (const auto& event : data) {
-    auto repo = event["repo"].value("name", "");
-    auto type = event.value("type", "");
-
-    if (type == "PushEvent")
-      stats[repo].push_events++;
-    else if (type == "PullRequestEvent")
-      stats[repo].pull_request_events++;
-    else if (type == "IssuesEvent")
-      stats[repo].issues_events++;
+    events.emplace_back();
+    auto& e = events.back();
+    e.actor = event["actor"].value("login", username);
+    e.repo = event["repo"].value("name", "");
+    e.type = event["type"];
+    e.timestamp = parse_time(event["created_at"]);
   }
-  return stats;
+  return events;
 }
+} // namespace Github
