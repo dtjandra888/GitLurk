@@ -1,6 +1,7 @@
 
 #include "github_client.h"
 #include "https_client.h"
+#include "github.h"
 
 #include <nlohmann/json.hpp>
 
