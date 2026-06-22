@@ -1,6 +1,6 @@
 
-add_subdirectory(client)
 add_subdirectory(types)
+add_subdirectory(client)
 
 add_executable(gitlurk
     main.cpp

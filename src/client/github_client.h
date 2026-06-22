@@ -1,5 +1,7 @@
 #pragma once
 
+#include "github.h"
+
 #include <optional>
 #include <string>
 #include <vector>
@@ -7,8 +9,6 @@
 class HttpsClient;
 
 namespace Github {
-
-struct GithubEvent;
 
 class GithubClient {
 public:

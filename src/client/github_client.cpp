@@ -1,7 +1,7 @@
 
 #include "github_client.h"
-#include "https_client.h"
 #include "github.h"
+#include "https_client.h"
 
 #include <nlohmann/json.hpp>
 
@@ -51,11 +51,15 @@ GithubClient::get_events(std::string username) {
 
   std::vector<GithubEvent> events;
   for (const auto& event : data) {
+    std::string actor;
+    std::string repo;
+    EventType type;
+    std::chrono::system_clock::time_point timestamp;
     events.emplace_back();
     auto& e = events.back();
     e.actor = event["actor"].value("login", username);
     e.repo = event["repo"].value("name", "");
-    e.type = event["type"];
+    e.type = EventType::push; //TODO: event parsing
     e.timestamp = parse_time(event["created_at"]);
   }
   return events;
