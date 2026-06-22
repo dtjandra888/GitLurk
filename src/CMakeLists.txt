@@ -1,6 +1,7 @@
 
 add_subdirectory(types)
 add_subdirectory(client)
+add_subdirectory(aggregator)
 
 add_executable(gitlurk
     main.cpp
@@ -8,6 +9,7 @@ add_executable(gitlurk
 
 target_link_libraries(gitlurk
     PRIVATE
-        client
         types
+        client
+        aggregator
 )
