@@ -21,6 +21,13 @@ void print_repo_summary(const Github::RepoSummary& repo) {
   std::cout << '\n';
 }
 
+void print_contributions(
+    const std::vector<Github::DayContribution>& contributions) {
+  for (const auto& day : contributions) {
+    std::cout << std::format("{:%Y-%m-%d}: {}\n", day.date, day.count);
+  }
+}
+
 int main(int argc, char* argv[]) {
   if (argc < 2) {
     std::cerr << "Usage: gitlurk <username>\n\n";
@@ -65,12 +72,9 @@ int main(int argc, char* argv[]) {
     print_repo_summary(repo);
   }
 
-  //  for (const auto& [actor, repo, event, timestamp] : events) {
-  //
-  //    std::cout << std::format(
-  //        "Event for {} by {}\n  Event type: {}\n  Timestamp: {}\n\n", repo,
-  //        actor, "PushEvent", timestamp);
-  //  }
+  auto contributions = EventAggregator::aggregate_by_day(events);
+
+  print_contributions(contributions);
 
   return 0;
 }

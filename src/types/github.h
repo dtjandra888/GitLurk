@@ -25,23 +25,43 @@ enum class EventType {
   watch
 };
 
-// TODO: implement other less common events
-constexpr std::string_view to_string(EventType type)
-{
-    switch (type) {
-        case EventType::push:
-            return "Push";
-        case EventType::pull_request:
-            return "PullRequest";
-        case EventType::create:
-            return "Create";
-        case EventType::fork:
-            return "Fork";
-        case EventType::watch:
-            return "Watch";
-        default:
-            return "Unknown";
-    }
+constexpr std::string_view to_string(EventType type) {
+  switch (type) {
+  case EventType::commit_comment:
+    return "Commit Comment";
+  case EventType::create:
+    return "Create";
+  case EventType::delete_event:
+    return "Delete Event";
+  case EventType::discussion:
+    return "Discussion";
+  case EventType::fork:
+    return "Fork";
+  case EventType::gollum:
+    return "Gollum";
+  case EventType::issue_comment:
+    return "Issue Comment";
+  case EventType::issues:
+    return "Issues";
+  case EventType::member:
+    return "Member";
+  case EventType::public_event:
+    return "Public Event";
+  case EventType::pull_request:
+    return "Pull Request";
+  case EventType::pull_request_review:
+    return "Pull Request Review";
+  case EventType::pull_request_review_comment:
+    return "Pull Request Review Comment";
+  case EventType::push:
+    return "Push";
+  case EventType::release:
+    return "Release";
+  case EventType::watch:
+    return "Watch";
+  default:
+    return "Unknown";
+  }
 }
 
 struct GithubEvent {
@@ -52,9 +72,14 @@ struct GithubEvent {
 };
 
 struct RepoSummary {
-    std::string name;
-    int total_events = 0;
-    std::unordered_map<EventType, int> event_counts;
+  int total_events = 0;
+  std::string name;
+  std::unordered_map<EventType, int> event_counts;
+};
+
+struct DayContribution {
+  int count;
+  std::chrono::year_month_day date;
 };
 
 } // namespace Github
